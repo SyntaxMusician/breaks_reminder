@@ -9,8 +9,9 @@
     в xfce4-notifyd не исчезает, пока не закрыта);
   * если пользователь прямо сейчас печатает/водит мышью (xprintidle),
     карточка откладывается до паузы в вводе, но не более чем на max_defer секунд;
-  * если за столом никого >= afk_reset минут — таймеры сбрасываются
-    (перерыв уже был, напоминания не копятся «стадом» по возвращении);
+  * если за столом никто >= afk_reset минут — таймеры замораживаются и продолжают отсчёт
+    после возвращения (afk_action=pause, по умолчанию; в т.ч. при переключениях KVM между ПК),
+    либо сбрасываются (afk_action=reset);
   * при блокировке экрана (флаг ~/.screen_locked от lock_state_watcher.sh)
     и при паузе (флаг ~/.breaks_paused) таймеры сбрасываются;
   * конфиг ~/.config/breaks_reminder.conf перечитывается на лету.
@@ -46,6 +47,7 @@ DEFAULTS = {
     "quiet_ms": 2000,            # idle меньше этого = пользователь печатает/водит мышь
     "max_defer": 180,            # сек: максимальное ожидание паузы в вводе
     "afk_reset": 5,              # минут бездействия = перерыв уже был
+    "afk_action": "pause",       # при простое >= afk_reset: pause — заморозить таймеры, reset — сбросить
     "fullscreen_defer": False,   # откладывать карточки, пока активное окно в fullscreen
     "eye_urgency": "normal",
     "eye_expire_ms": 10000,
@@ -256,6 +258,11 @@ def reset_timers():
     return (timedelta(), timedelta(minutes=cfg["eye_interval"]),
             timedelta(minutes=cfg["break_interval"]))
 
+def afk_action():
+    """Нормализованный afk_action из конфига: 'pause' (заморозить таймеры) или 'reset' (сбросить)."""
+    action = str(cfg.get("afk_action", "pause")).strip().lower()
+    return action if action in ("pause", "reset") else "pause"
+
 
 def run():
     global cfg, cfg_mtime
@@ -285,6 +292,7 @@ def run():
 
     active, next_eye, next_break = reset_timers()
     was_paused = False
+    was_away = False
     last_tick = time.monotonic()
     last_status = datetime.now()
 
@@ -325,11 +333,19 @@ def run():
                     active, next_eye, next_break = reset_timers()
                     continue
 
-            # --- AFK: за столом давно никого ---
+            # --- AFK: за столом давно никого (в т.ч. KVM переключён на другой ПК) ---
             idle = get_idle_ms()
             if idle is not None and idle >= cfg["afk_reset"] * 60000:
-                active, next_eye, next_break = reset_timers()
+                if not was_away:
+                    log(f"⏸ нет ввода ≥ {cfg['afk_reset']} мин — таймеры "
+                        f"{'заморожены' if afk_action() == 'pause' else 'сброшены'} (afk_action={afk_action()})")
+                    was_away = True
+                if afk_action() == "reset":
+                    active, next_eye, next_break = reset_timers()
                 continue
+            if was_away:
+                log("▶ ввод возобновился — таймеры продолжают отсчёт")
+                was_away = False
 
             # считаем активное время
             active += timedelta(seconds=delta)
