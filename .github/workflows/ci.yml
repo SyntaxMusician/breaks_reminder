@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  syntax-and-smoke:
+    name: Синтаксис и smoke-тест
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Python-синтаксис (py_compile)
+        run: python3 -m py_compile breaks_reminder.py
+      - name: Shell-синтаксис (bash -n)
+        run: |
+          for f in *.sh; do
+            echo "bash -n $f"
+            bash -n "$f"
+          done
+      - name: Smoke-тест
+        run: python3 tests/smoke_test.py
