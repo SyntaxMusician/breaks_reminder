@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Собранные архивы для распространения
+breaks_reminder.tar.gz
+
+# Локальный конфиг (в репозитории только .example)
+breaks_reminder.conf
+
+# Логи
+*.log
+
+# Редакторы и ОС
+.vscode/
+.idea/
+.DS_Store
