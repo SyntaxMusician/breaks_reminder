@@ -1,0 +1,13 @@
+[Unit]
+Description=Breaks reminder — напоминания об отдыхе для глаз и разминке
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/breaks_reminder.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=graphical-session.target

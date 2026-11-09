@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Breaks Reminder (autostart)
+Name[ru]=Напоминания об отдыхе (автозапуск)
+Comment=Напоминания об отдыхе для глаз и разминке
+Exec=breaks_reminder.py
+Icon=appointment-soon
+Terminal=false
+Categories=Utility;
+StartupNotify=false
+X-GNOME-Autostart-enabled=true
+X-XFCE-Autostart-enabled=true

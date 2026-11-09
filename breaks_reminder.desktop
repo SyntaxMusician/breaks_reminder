@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Breaks Reminder
+Name[ru]=Напоминания об отдыхе
+GenericName=Break reminder
+GenericName[ru]=Напоминания о перерывах
+Comment=Напоминания об отдыхе для глаз и разминке
+Exec=breaks_reminder.py
+Icon=appointment-soon
+Terminal=false
+Categories=Utility;Accessibility;
+Keywords=break;eyes;rest;remind;пауза;глаза;перерыв;разминка;
+StartupNotify=false

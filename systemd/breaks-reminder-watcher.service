@@ -1,0 +1,13 @@
+[Unit]
+Description=Breaks reminder — отслеживание блокировки экрана
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/lock_state_watcher.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=graphical-session.target

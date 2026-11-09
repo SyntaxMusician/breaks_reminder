@@ -1,0 +1,48 @@
+# Конфиг breaks_reminder
+# Расположение: ~/.config/breaks_reminder.conf
+# Файл перечитывается автоматически после сохранения — перезапуск не нужен.
+# Разделы ([reminder], [idle], [behavior]) не влияют на разбор — ключи глобальные.
+
+[reminder]
+# Интервалы напоминаний, минуты
+eye_interval = 20
+break_interval = 45
+
+# Если оба напоминания срабатывают почти одновременно — показать одной карточкой
+# (окно «почти одновременно» в секундах)
+combine_window = 90
+
+# Карточка «разминка»: critical не исчезает сама (в xfce4-notifyd),
+# normal — исчезает по таймеру
+break_urgency = critical
+# Таймаут карточки, мс; 0 = поведение демона уведомлений по умолчанию
+break_expire_ms = 0
+break_icon = appointment-soon
+
+# Карточка «отдых для глаз»
+eye_urgency = normal
+eye_expire_ms = 10000
+eye_icon = dialog-information
+
+# Звук при «разминке»
+sound = true
+sound_file = /usr/share/sounds/freedesktop/stereo/bell.oga
+
+[idle]
+# Пока время бездействия меньше quiet_ms мс, считается, что вы печатаете или
+# водите мышью, — карточка откладывается до паузы в вводе,
+# но не дольше max_defer секунд
+quiet_ms = 2000
+max_defer = 180
+
+# Если за столом никого >= afk_reset минут — перерыв уже был,
+# таймеры сбрасываются
+afk_reset = 5
+
+[behavior]
+# Откладывать карточки, пока активное окно в fullscreen (видео, созвоны)
+fullscreen_defer = false
+# Показывать карточку при запуске программы
+notify_on_start = false
+# Печатать статус раз в минуту (видно в логах)
+log_status = true
